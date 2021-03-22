@@ -1,0 +1,68 @@
+<!-- HTML page with an external JavaScript file.
+     The goal of this website is to use TMDB's(The movie Database) API within Jquery.
+     The user is prompted to enter the name or ID of a movie within the TMDb.
+     They can then add to their favorites list,
+     clear their list, display the list, or continue searching to add more movies.
+	 Written by Ryan Mendoza
+	 Written on 03/18/2021
+	 Languages: HTML, CSS, Javascript, and Jquery
+	 Resources: PowerPoint slides and textbook for chapters 9, 10, and 11 as well as Monday, March 15th's in class video.refreshList: async () => {
+        //I will spare the long comments here, as these next lines do what is done in the searchMovie function.
+        //Only this time it only shows what is in your favorites list instead of what you search for.
+        $('#Table').html(" ")
+        $('#Table').append('<table><caption></caption>')
+        $.each(Movies, function(index, result){
+            settings.url = "https://api.themoviedb.org/3/movie/" + result + "?api_key=" + APIKEY + "&language=en-US"
+            $.ajax(settings).done(function (response){
+                $('#Table').append('<tr><td>')
+                $('#Table').append('Title: ' + response.title + '<br>Release Date: ' + response.release_date + '<br>TMDb ID: ' + response.id + '<br>' + '<img src="https://image.tmdb.org/t/p/w92/' + response.poster_path+'"onerror=\'this.src="none.jpg"\' ><br>')
+                $('#Table').append('<br>' + response.overview + '<br>')
+                $('#Table').append('<input type="button" value="Remove Movie From List" onclick ="App.removeItem('+index+');">')
+                $('#Table').append('<hr>')
+                $('#Table').append('</td></tr>')
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="My Movie List">
+    <meta name="author" content="Ryan Mendoza">
+    <title>My Movie List</title>
+    <script src="Movie.js"></script>
+    <script src="jquery-ui-1.12.1/external/jquery/jquery.js"></script>
+</head>
+<style>
+    body {text-align: center; height: 100%; padding-bottom: 100px;background-color: beige;}
+    table {align: center;}
+    td, th {background-color: beige; align: center;}
+    a {color: blue; text-decoration: none;}
+    a:hover {text-decoration: underline;}
+    .footer{position: fixed; left: 0; bottom: 0; width: 100%; background-color: gray; text-align: center;}
+</style>
+<body>
+<h1>My Movie List</h1>
+<h4>Welcome to the site!<br>Start to create your list of favorite movies!</h4>
+<br>
+<div>Please input a movie to search for, or it's TMDb ID to add to your list.<br> For help, click the help button.</div>
+<form id="frm1">
+    <label for="Search"></label><input type="text" id="Search" value="">
+</form>
+<br>
+<input type="button" value="Search" onclick="App.searchMovie();">
+<input type="button" value="Clear Screen" onclick="App.clearPage();">
+<input type="button" value="Add By Item ID" onclick="App.addItemID();">
+<input type="button" value="Display Movie List" onclick="App.refreshList();">
+<input type="button" value="Clear List" onclick="App.clearList();">
+<input type="button" value="Help" onclick="App.displayHelp();">
+<input type="button" value="Credits" onclick="App.displayCredits();">
+<br>
+<hr>
+<div id="Table">
+</div>
+<div class="footer">
+    <p>
+        <a href="https://www.themoviedb.org/">This product uses the TMDb API but is not endorsed or certified by TMDb</a>
+    </p>
+</div>
+</body>
+</html>
