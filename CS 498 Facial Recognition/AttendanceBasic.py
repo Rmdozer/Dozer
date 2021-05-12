@@ -2,7 +2,7 @@
 # But to also push me to the limit of learning how to use the included libraries,
 # Boost my personal portfolio,
 # and learn more about facial recognition.
-# Written by Ryan Mendozaz
+# Written by Ryan Mendoza
 # Written and updated throughout 02/2021-05/2021
 # Languages: Python with the libraries below
 # Resources: Too many to list, these will be included in the final paper
@@ -17,17 +17,15 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory
 from PIL import Image, ImageTk
 
-# Declaring needed variables
-path = 'betterWebcamImgs'
+# Declaring variables
 images = []
 classNames = []
-myList = os.listdir(path)
-print(myList)
 
+# Testing if CUDA is enabled
 count = cv2.cuda.getCudaEnabledDeviceCount()
 print("cheese", count)
 
-# Start of GUI work
+# Creates GUI
 window = tk.Tk()
 window.title("Facial Recognition Attendance Tracker")
 window.configure(background='yellow')
@@ -41,11 +39,17 @@ message.pack()
 lmain = tk.Label(window)
 lmain.pack()
 captureDevice = cv2.VideoCapture(0)
+
+# Gets directory of pictures, and prints out a list of the pictures within the directory
+path = tk.filedialog.askdirectory()
 cv2image = None
+myList = os.listdir(path)
+print(myList)
 
 # Prints out the names of the people in the pictures
 faceLoc = []
 for cl in myList:
+
     # Original image
     curImg = cv2.imread(f'{path}/{cl}')
     images.append(curImg)
@@ -54,8 +58,7 @@ for cl in myList:
     detectedFaces = face_recognition.face_locations(curImg)
     print("DETECT:", detectedFaces)
 
-    # PROBABLY should have an if statement here that any faces
-    # are detected, but oh well...
+    # Creates a copy of the image to have a new mask made.
     face = detectedFaces[0]
     faceLoc.append(detectedFaces)
     startY = (face[0] + face[2]) // 2
@@ -67,14 +70,12 @@ for cl in myList:
     classNames.append(name)
     faceLoc.append(detectedFaces)
 
+    # Skeleton to have a new mask made
     # maskImg2 = np.copy(curImg)
     # cv2.rectangle(maskImg2, (face[1], startY), (face[3], face[2]), (255, 255, 255), -1)
     # images.append(maskImg2)
     # classNames.append(name)
     # faceLoc.append(detectedFaces)
-
-    # cv2.imshow("MASK", maskImg)
-    # cv2.waitKey(-1)
 
 # Function to find the face encodings
 encodeList = []
@@ -104,6 +105,7 @@ def mark(name):
             f.writelines(f'\n{name},{dtString}')
 
 
+# Function to preform main functionality of the program.
 def getFrame():
     global cv2image
     _, frame = captureDevice.read()
@@ -131,14 +133,6 @@ def getFrame():
             y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
             # Writes a label with the name of the found person
             cv2.putText(cv2image, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 255), 2)
-            # Resizes the webcam feed(Working on comparing with the original pictures)
-            # rows, cols, _ = cv2image.shape
-            # print("Rows", rows)
-            # print("cols", cols)
-            # cutImage = cv2image[120: 240, 0: 640]
-            # cv2.imshow("Cut", cutImage)
-            # cv2.imwrite('webcamComparison/Cut.jpg', cutImage)
-            # Prints name, date into the Attendance CSV file
             mark(name)
 
     # Implements the showing of the webcam in the GUI
@@ -150,21 +144,13 @@ def getFrame():
     lmain.after(10, getFrame)
 
 
-# Implements the File path specification textbox in the GUI
-fileText = tk.Text(window, width=18, height=2)
-fileText.pack()
-
-# Implements the file path button.
-# fileButton = tk.Button(window, text="Type a File Name", command=fileText.get, fg="white", bg="blue",
-#                        width=20, height=3, activebackground="Red")
-# fileButton.pack()
-
 # Implements the quit button in the GUI
 quitWindow = tk.Button(window, text="Quit",
                        command=window.destroy, fg="white", bg="blue",
                        width=20, height=3, activebackground="Red",
                        font=('times', 15, ' bold '))
 quitWindow.pack()
+
 # Gets window frame and loops the Tkinter window
 getFrame()
 window.mainloop()
